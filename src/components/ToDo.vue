@@ -1,11 +1,11 @@
 <template>
   <li class="card" draggable="true">
     <div class="cb-container">
-      <input type="checkbox" :checked="todo.isCompleted ? true : null" class="cb-input"/>
+      <input @click="changeStatus" type="checkbox" :checked="todo.isCompleted ? true : null" class="cb-input"/>
       <span class="check"></span>
     </div>
     <p class="item">{{todo.title}}</p>
-    <button class="clear">
+    <button @click="deleteTodo" class="clear">
       <img :src="crossImage" alt="clear it"/>
     </button>
   </li>
@@ -19,6 +19,16 @@ export default {
   data () {
     return {
       crossImage: cross
+    }
+  },
+  methods: {
+    deleteTodo () {
+      if (confirm('آیا از حذف اطمینان دارید؟')) {
+        this.$emit('Deleted', this.todo.id)
+      }
+    },
+    changeStatus () {
+      this.$emit('changeStatus', this.todo.id, !this.todo.isCompleted)
     }
   }
 }

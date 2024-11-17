@@ -3,7 +3,11 @@
   <main>
     <add-todo @AddNewTodo="AddTodo"></add-todo>
     <ul class="todos">
-      <to-do v-for="(item, index) in todos" :key="index" :todo="item"></to-do>
+      <to-do v-for="item in todos"
+       :key="item.id" :todo="item"
+       @Deleted="DeleteTodo"
+       @changeStatus="changeTodoStatus">
+      </to-do>
     </ul>
     <div class="card stat">
       <p class="corner"><span id="items-left">0</span> مورد باقی مانده</p>
@@ -13,7 +17,7 @@
         <button id="completed">تکمیل</button>
       </div>
       <div class="corner">
-        <button id="clear-completed">حذف تکمیل شده ها</button>
+        <button @click="deleteCompleted" id="clear-completed">حذف تکمیل شده ها</button>
       </div>
     </div>
   </main>
@@ -32,15 +36,30 @@ export default {
   data () {
     return {
       todos: [
-        { title: 'Java', isCompleted: false },
-        { title: 'Asp.net', isCompleted: true }
       ]
     }
   },
   methods: {
     AddTodo (title) {
-      const todo = { title, isComplete: false }
+      const id = Math.random().toString(16).slice(2)
+      const todo = { id, title, isCompleted: false }
       this.todos.push(todo)
+    },
+    DeleteTodo (id) {
+      this.todos = this.todos.filter(f => f.id !== id)
+    },
+    changeTodoStatus (id, newStatus) {
+      var newTodos = [...this.todos]
+      var selectedTodo = newTodos.find(f => f.id === id)
+      selectedTodo.isCompleted = newStatus
+      this.todos = newTodos
+    },
+    deleteCompleted (id) {
+      if (confirm('آیا از حذف اطمینان دارید؟')) {
+        var newTodos = [...this.todos]
+        newTodos = newTodos.filter(f => f.isCompleted === false)
+        this.todos = newTodos
+      }
     }
   }
 }
